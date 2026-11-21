@@ -1,0 +1,1 @@
+"""Excel-to-Calc onboarding demo application."""

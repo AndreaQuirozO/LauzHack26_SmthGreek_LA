@@ -1,0 +1,175 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #172033;
+  background: #f2f5f9;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.page-header,
+main,
+footer {
+  width: min(100% - 2rem, 920px);
+  margin: 0 auto;
+}
+
+.page-header {
+  padding: 2rem 0 1rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #315c99;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  line-height: 1.2;
+}
+
+h1 {
+  margin: 0.35rem 0 0.75rem;
+  font-size: clamp(1.8rem, 5vw, 2.7rem);
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+.notice {
+  padding: 0.8rem 1rem;
+  border-left: 4px solid #d89c25;
+  background: #fff7e6;
+}
+
+.panel {
+  margin: 1rem 0;
+  padding: 1.25rem;
+  border: 1px solid #dbe2eb;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(23 32 51 / 5%);
+}
+
+.form-row {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+
+label {
+  font-weight: 650;
+}
+
+select,
+textarea,
+input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #aeb9c8;
+  border-radius: 0.4rem;
+  font: inherit;
+}
+
+textarea {
+  display: block;
+  margin: 0.35rem 0 0.75rem;
+  resize: vertical;
+}
+
+button {
+  padding: 0.65rem 1rem;
+  border: 0;
+  border-radius: 0.4rem;
+  color: #fff;
+  background: #2459a6;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+button:hover:enabled {
+  background: #173f7b;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.status {
+  min-height: 1.5rem;
+  color: #40506a;
+}
+
+.answer,
+.conversation {
+  margin-top: 1rem;
+}
+
+.answer h3 {
+  margin-bottom: 0.35rem;
+}
+
+.answer ol {
+  padding-left: 1.4rem;
+}
+
+.answer li {
+  margin: 0.6rem 0;
+}
+
+.sources {
+  padding-left: 1.2rem;
+  font-size: 0.92rem;
+}
+
+.conversation article {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #f2f5f9;
+}
+
+.conversation article p:first-child {
+  margin-top: 0;
+}
+
+.conversation article p:last-child {
+  margin-bottom: 0;
+}
+
+.update-panel {
+  border-top: 4px solid #d89c25;
+}
+
+#approval-form {
+  display: grid;
+  gap: 0.6rem;
+  max-width: 32rem;
+  margin-top: 1rem;
+}
+
+#approval-form[hidden] {
+  display: none;
+}
+
+footer {
+  padding: 0.5rem 0 2rem;
+  color: #53627a;
+  font-size: 0.9rem;
+}

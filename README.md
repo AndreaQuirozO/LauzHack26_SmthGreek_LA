@@ -1,1 +1,94 @@
-# LauzHack26_SmthGreek_LA
+# Excel to LibreOffice Calc onboarding demo
+
+A local hackathon prototype that helps fictional employees move familiar spreadsheet tasks from Microsoft Excel to LibreOffice Calc. The server offers role-specific guides and grounded follow-up answers, plus a separate administrator-approved update demonstration in a disposable Docker container.
+
+## Scope and safety
+
+- Roles, tasks, and session data are fictional and temporary; a server restart clears in-memory state.
+- Do not enter confidential company or employee information. Guide and chat prompts, the selected fictional role, and curated notes are sent to the configured model provider.
+- Answers are grounded in the small source corpus and include links resolved by the server. The model may still make mistakes; verify important work against the linked official documentation.
+- The `certifi` scenario is a fixed demonstration, not a reading of the host machine and not a claim that the baseline is vulnerable. It never updates the host or employee devices.
+- This prototype has no live company integrations, document uploads, device management, production authentication, or multi-tenant support. Do not expose the server beyond loopback.
+- Docker is an isolation aid for this demonstration, not a production security boundary or endpoint-management system.
+
+## Requirements
+
+- Python 3.11 or newer.
+- Docker Desktop or another Docker installation is needed only to build and run the update demonstration.
+- An API key and model identifier for an OpenAI-compatible provider are needed to generate guides and answers.
+
+## Install and configure (PowerShell)
+
+From the project directory, create an environment and install the app with its tests:
+
+```powershell
+python --version
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+```
+
+Configure the model provider in the same PowerShell window. `OPENAI_BASE_URL` is optional and defaults to the OpenAI API URL.
+
+```powershell
+$env:OPENAI_API_KEY = "your-model-provider-key"
+$env:OPENAI_MODEL = "your-model-name"
+$env:OPENAI_BASE_URL = "https://api.openai.com/v1"
+```
+
+The app reports a clear configuration or availability error if model settings are missing or the provider cannot be reached. The configured administrator secret is separate from the model key:
+
+```powershell
+$env:DEMO_ADMIN_SECRET = "choose-a-long-local-demo-secret"
+```
+
+Do not commit or share either secret. The admin secret is sent only in the approval request header and is not included in application logs or request bodies.
+
+## Build and run
+
+Build the fixed update image before trying the approval workflow. The build downloads only the pinned `certifi` wheels and verifies their SHA-256 hashes; the approved container execution itself uses no network.
+
+```powershell
+docker build --tag excel-calc-certifi-demo:2026.11.20 .\demo\update
+```
+
+Start the web app bound to IPv4 loopback:
+
+```powershell
+.\.venv\Scripts\python.exe -m app.main
+```
+
+Open <http://127.0.0.1:8000>. The server rejects non-loopback hosts and cross-origin state-changing requests. Keep the terminal open while using the demo.
+
+## Walkthrough
+
+1. Select one of the fictional roles and start a temporary onboarding session.
+2. Select a familiar spreadsheet task and generate an Excel-to-Calc guide. Follow the source links to verify product details.
+3. Ask a task-related follow-up. If the curated notes do not support an answer, the assistant says so instead of inventing one.
+4. Review the separate `certifi` proposal. It always describes the catalog's fixed baseline `2024.8.30` and target `2026.11.20`; it does not inspect the host.
+5. An authorized demo administrator enters `DEMO_ADMIN_SECRET` and approves once. The server runs the prebuilt image with fixed arguments, no mounts, no network, a read-only root filesystem, a non-root UID, bounded temporary storage, resource limits, and a time limit.
+6. The container installs the pinned baseline wheel, upgrades offline to the pinned target wheel, verifies the version, and is removed. The UI reports the verified version or a safe failure (for example, if Docker is unavailable).
+
+Each session can create only one proposal, and a proposal is consumed before execution begins. Missing administrator configuration, a wrong secret, cross-session approval, replay, timeout, Docker failure, or a version mismatch fails closed. The demo secret is not a substitute for production authentication.
+
+## Tests
+
+Run the API, grounding, session, approval, and isolation-argument tests:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+The real Docker integration test is opt-in. It builds a uniquely tagged image, checks the approved offline update and container cleanup, then removes the image it built:
+
+```powershell
+$env:RUN_DOCKER_INTEGRATION = "1"
+.\.venv\Scripts\python.exe -m pytest tests\test_updates.py -k docker_update_integration -q
+Remove-Item Env:\RUN_DOCKER_INTEGRATION
+```
+
+## Cleanup
+
+- Stop the server with `Ctrl+C`; this clears all in-memory sessions and proposals.
+- The update container uses Docker's `--rm` option and its temporary virtual environment is removed when execution completes.
+- Remove the demo image when it is no longer needed: `docker image rm excel-calc-certifi-demo:2026.11.20`.
+- Close the PowerShell window or remove its environment variables when finished.
