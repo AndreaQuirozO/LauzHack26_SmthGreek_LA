@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Excel to Calc onboarding demo</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="page-header">
+      <p class="eyebrow">Local hackathon prototype</p>
+      <h1>Excel to LibreOffice Calc onboarding</h1>
+      <p>Choose a fictional role and spreadsheet task to get a source-backed guide and ask follow-up questions.</p>
+      <p class="notice">Use fictional examples only. Do not enter confidential company or employee information. Model requests are sent to the provider configured by the demo operator.</p>
+    </header>
+
+    <main>
+      <section class="panel" aria-labelledby="profile-heading">
+        <h2 id="profile-heading">1. Choose a demo profile</h2>
+        <div class="form-row">
+          <label for="role-select">Fictional role</label>
+          <select id="role-select" required></select>
+        </div>
+        <div class="form-row">
+          <label for="task-select">Familiar spreadsheet task</label>
+          <select id="task-select" required></select>
+        </div>
+        <button id="start-session" type="button">Start onboarding session</button>
+        <p id="session-status" class="status" role="status" aria-live="polite">Loading fictional roles…</p>
+      </section>
+
+      <section class="panel" aria-labelledby="guide-heading">
+        <h2 id="guide-heading">2. Get an onboarding guide</h2>
+        <button id="generate-guide" type="button" disabled>Generate Excel-to-Calc guide</button>
+        <div id="guide-content" class="answer" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="chat-heading">
+        <h2 id="chat-heading">3. Ask a follow-up</h2>
+        <form id="chat-form">
+          <label for="chat-message">Question about the current guide</label>
+          <textarea id="chat-message" rows="3" maxlength="2000" placeholder="Ask about a step or a Calc formula…" required disabled></textarea>
+          <button id="send-chat" type="submit" disabled>Ask</button>
+        </form>
+        <div id="chat-content" class="conversation" aria-live="polite"></div>
+      </section>
+
+      <section class="panel update-panel" aria-labelledby="update-heading">
+        <h2 id="update-heading">4. Review the separate demo update</h2>
+        <p>This fixed <code>certifi</code> version change runs only in a disposable container after administrator approval. It is not a device update or a claim that the baseline is vulnerable.</p>
+        <button id="propose-update" type="button" disabled>Review demo update</button>
+        <div id="proposal-content" class="answer" aria-live="polite"></div>
+        <form id="approval-form" hidden>
+          <label for="admin-secret">Demo administrator secret</label>
+          <input id="admin-secret" type="password" autocomplete="off" required>
+          <button id="approve-update" type="submit">Approve and run isolated demo</button>
+        </form>
+        <p id="update-status" class="status" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <footer>
+      <p>Demo only: sessions are temporary and stored in memory; the server must remain on loopback. Docker is an isolation aid, not production device management.</p>
+    </footer>
+  </body>
+</html>

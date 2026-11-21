@@ -1,0 +1,121 @@
+{
+  "roles": [
+    {
+      "id": "finance_analyst",
+      "name": "Finance analyst",
+      "description": "Builds budgets, reconciles figures, and prepares recurring reports.",
+      "tasks": [
+        {
+          "id": "monthly_budget",
+          "name": "Build a monthly budget",
+          "description": "Organize planned and actual amounts and calculate totals."
+        },
+        {
+          "id": "variance_report",
+          "name": "Prepare a variance report",
+          "description": "Compare actual figures with a target and highlight differences."
+        }
+      ]
+    },
+    {
+      "id": "hr_coordinator",
+      "name": "HR coordinator",
+      "description": "Maintains staffing trackers and summarizes non-sensitive planning data.",
+      "tasks": [
+        {
+          "id": "headcount_tracker",
+          "name": "Update a headcount tracker",
+          "description": "Keep a structured table of fictional team and staffing totals."
+        },
+        {
+          "id": "training_summary",
+          "name": "Summarize training attendance",
+          "description": "Count attendance entries and prepare a simple summary."
+        }
+      ]
+    },
+    {
+      "id": "operations_manager",
+      "name": "Operations manager",
+      "description": "Tracks inventory and reviews recurring operational metrics.",
+      "tasks": [
+        {
+          "id": "inventory_tracker",
+          "name": "Maintain an inventory tracker",
+          "description": "Record fictional item counts and calculate totals."
+        },
+        {
+          "id": "weekly_metrics",
+          "name": "Review weekly metrics",
+          "description": "Arrange weekly figures and compare them with a target."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "libreoffice_calc_guide_24_8",
+      "title": "Calc Guide, Chapter 9: Using Formulas and Functions",
+      "publisher": "LibreOffice Documentation Team",
+      "version": "LibreOffice 24.8 documentation",
+      "url": "https://books.libreoffice.org/en/CG248/CG24809-FormulasAndFunctions.html"
+    },
+    {
+      "id": "libreoffice_calc_data_guide_24_8",
+      "title": "Calc Guide, Chapter 2: Entering, Editing, and Formatting Data",
+      "publisher": "LibreOffice Documentation Team",
+      "version": "LibreOffice 24.8 documentation",
+      "url": "https://books.libreoffice.org/en/CG248/CG24802-EnteringandEditingData.html"
+    },
+    {
+      "id": "microsoft_excel_formulas",
+      "title": "Overview of formulas in Excel",
+      "publisher": "Microsoft Support",
+      "version": "Web documentation, accessed 2026-11-21",
+      "url": "https://support.microsoft.com/en-us/excel/get-started/overview-of-formulas-in-excel"
+    }
+  ],
+  "notes": [
+    {
+      "id": "formula_entry",
+      "topic": "entering formulas",
+      "summary": "Both Excel and Calc use formulas that begin with an equals sign. In Calc, enter the formula in a cell or the input line of the Formula Bar, then confirm it.",
+      "source_ids": [
+        "libreoffice_calc_guide_24_8",
+        "microsoft_excel_formulas"
+      ]
+    },
+    {
+      "id": "calc_function_wizard",
+      "topic": "finding a function in Calc",
+      "summary": "Calc's Function Wizard can help find a function and enter its arguments; use it when an Excel function name or syntax is unfamiliar.",
+      "source_ids": [
+        "libreoffice_calc_guide_24_8"
+      ]
+    },
+    {
+      "id": "calc_enter_and_edit_data",
+      "topic": "entering and editing cell data",
+      "summary": "In Calc, select a cell and type to enter data, then press Enter. To edit existing cell contents, press F2 or edit the input line on the Formula Bar, then confirm the change.",
+      "source_ids": [
+        "libreoffice_calc_data_guide_24_8"
+      ]
+    },
+    {
+      "id": "excel_formula_basics",
+      "topic": "Excel formula basics",
+      "summary": "Excel formulas begin with an equals sign and can include functions, cell references, constants, and operators. A formula can be entered in a cell and confirmed with Enter.",
+      "source_ids": [
+        "microsoft_excel_formulas"
+      ]
+    },
+    {
+      "id": "calc_formula_separators",
+      "topic": "formula argument separators",
+      "summary": "Formula argument separators in Calc can depend on locale and configuration. If a copied formula is rejected, check the local separator setting rather than assuming the formula itself is unsupported.",
+      "source_ids": [
+        "libreoffice_calc_guide_24_8"
+      ]
+    }
+  ]
+}
