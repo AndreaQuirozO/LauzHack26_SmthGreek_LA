@@ -52,6 +52,11 @@ class OpenAICompatibleClient:
         model = (
             os.getenv("TOGETHER_MODEL", "").strip()
             or os.getenv("OPENAI_MODEL", "").strip()
+            or (
+                "moonshotai/Kimi-K3.1-Pro"
+                if os.getenv("TOGETHER_API_KEY", "").strip()
+                else ""
+            )
         )
         base_url = (
             os.getenv("TOGETHER_BASE_URL", "").strip()
@@ -64,8 +69,8 @@ class OpenAICompatibleClient:
         )
         if not api_key or not model:
             raise AssistantConfigurationError(
-                "AI is not configured. Set TOGETHER_API_KEY and TOGETHER_MODEL "
-                "(or OPENAI_API_KEY and OPENAI_MODEL), then restart the demo."
+                "AI is not configured. Set TOGETHER_API_KEY (or OPENAI_API_KEY and OPENAI_MODEL), "
+                "then restart the demo."
             )
         if not base_url:
             raise AssistantConfigurationError("Set OPENAI_BASE_URL to a valid OpenAI-compatible API URL.")
@@ -127,8 +132,9 @@ class OnboardingAssistant:
         role: dict,
         task: dict,
         history: list[dict[str, str]],
+        software_history: list[dict] | None = None,
     ) -> AssistantResult:
-        messages = self._build_messages(role, task, history)
+        messages = self._build_messages(role, task, history, software_history)
         messages.append(
             {
                 "role": "user",
@@ -150,8 +156,9 @@ class OnboardingAssistant:
         task: dict | None,
         history: list[dict[str, str]],
         question: str,
+        software_history: list[dict] | None = None,
     ) -> AssistantResult:
-        messages = self._build_messages(role, task, history)
+        messages = self._build_messages(role, task, history, software_history)
         messages.append(
             {
                 "role": "user",
@@ -171,6 +178,7 @@ class OnboardingAssistant:
         role: dict,
         task: dict | None,
         history: list[dict[str, str]],
+        software_history: list[dict] | None = None,
     ) -> list[dict[str, str]]:
         sources = {source["id"]: source for source in get_sources()}
         notes = []
@@ -186,6 +194,7 @@ class OnboardingAssistant:
                 "name": role["name"],
                 "description": role["description"],
             },
+            "software_background": software_history or [],
             "selected_task": task,
             "migration_notes": notes,
         }
@@ -196,7 +205,11 @@ class OnboardingAssistant:
             "the provided migration notes. Do not invent product behavior, compatibility, exact menus, "
             "or shortcuts. Cite only supplied source identifiers in the JSON source_ids field; never "
             "create source links. If the notes are insufficient, say so and set unsupported to true. "
-            "The selected role and task are fictional demo context. Context JSON follows:\n"
+            "The selected role and task are fictional demo context. The software_background lists tools "
+            "this employee already knows; use it only to frame explanations (relate steps to tools they "
+            "know and skip basics they are expert in). Never invent how a background tool maps to the "
+            "target product: only relate it when a migration note already supports that fact. Context "
+            "JSON follows:\n"
             + json.dumps(context, ensure_ascii=False)
         )
         messages = [{"role": "system", "content": system_prompt}]

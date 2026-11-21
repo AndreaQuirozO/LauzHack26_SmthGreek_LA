@@ -1,6 +1,7 @@
 const roleSelect = document.querySelector("#role-select");
 const taskSelect = document.querySelector("#task-select");
 const sessionStatus = document.querySelector("#session-status");
+const softwareHistory = document.querySelector("#software-history");
 const generateGuideButton = document.querySelector("#generate-guide");
 const guideContent = document.querySelector("#guide-content");
 const chatForm = document.querySelector("#chat-form");
@@ -137,6 +138,24 @@ function renderProposal(proposal) {
   updateControls();
 }
 
+function renderSoftwareHistory(history) {
+  softwareHistory.replaceChildren();
+  if (!history || !history.length) return;
+  const heading = document.createElement("h4");
+  heading.textContent = "Software background on record";
+  softwareHistory.append(heading);
+  const list = document.createElement("ul");
+  list.className = "sources";
+  for (const software of history) {
+    const item = document.createElement("li");
+    item.textContent =
+      `${software.name} (${software.vendor}) — ${software.category}, ` +
+      `${software.years_used} yr, ${software.proficiency}`;
+    list.append(item);
+  }
+  softwareHistory.append(list);
+}
+
 async function restoreSession() {
   try {
     const session = await apiRequest("/api/session");
@@ -145,6 +164,7 @@ async function restoreSession() {
     sessionReady = true;
     sessionStatus.textContent = `Session active for ${session.role.name}.`;
     updateControls();
+    renderSoftwareHistory(session.software_history);
     if (session.context.pending_update) renderProposal(session.context.pending_update);
   } catch (error) {
     sessionStatus.textContent = "Choose a role and start a temporary demo session.";
@@ -166,7 +186,10 @@ async function loadRoles() {
   await restoreSession();
 }
 
-roleSelect.addEventListener("change", () => populateTasks(roleSelect.value));
+roleSelect.addEventListener("change", () => {
+  populateTasks(roleSelect.value);
+  softwareHistory.replaceChildren();
+});
 
 document.querySelector("#start-session").addEventListener("click", async () => {
   try {
@@ -181,6 +204,7 @@ document.querySelector("#start-session").addEventListener("click", async () => {
     updateStatus.textContent = "";
     sessionStatus.textContent = `Session active for ${session.role.name}.`;
     updateControls();
+    renderSoftwareHistory(session.software_history);
   } catch (error) {
     sessionStatus.textContent = error.message;
   }

@@ -153,3 +153,28 @@ def test_provider_failure_returns_safe_api_error() -> None:
 
     assert response.status_code == 503
     assert "timed out" in response.json()["detail"]
+
+
+def test_session_returns_role_software_history() -> None:
+    client = TestClient(create_app(assistant=OnboardingAssistant(FakeProvider([]))))
+
+    response = client.post("/api/session", json={"role_id": "finance_analyst"})
+
+    assert response.status_code == 201
+    history = response.json()["software_history"]
+    assert [software["name"] for software in history] == ["Microsoft Excel", "Google Sheets"]
+
+    restored = client.get("/api/session")
+    assert restored.json()["software_history"] == history
+
+
+def test_software_history_reaches_provider_context() -> None:
+    provider = FakeProvider([GUIDE_CONTENT])
+    client = TestClient(create_app(assistant=OnboardingAssistant(provider)))
+    client.post("/api/session", json={"role_id": "finance_analyst"})
+
+    client.post("/api/guide", json={"task_id": "monthly_budget"})
+
+    system_prompt = provider.calls[0][0]["content"]
+    assert "software_background" in system_prompt
+    assert "Microsoft Excel" in system_prompt

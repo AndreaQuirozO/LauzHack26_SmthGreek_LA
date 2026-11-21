@@ -27,16 +27,25 @@ python -m venv lauzhack.venv
 .\lauzhack.venv\Scripts\python.exe -m pip install -e ".[test]"
 ```
 
+### Persistent configuration (recommended)
+
+Copy the example file and add your API key:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Edit `.env` and replace `your-together-api-key` with your actual key. The file is ignored by git and persists across sessions. The app loads it automatically on startup. See `.env.example` for all available options.
+
 ### Together.AI
 
 Configure Together.AI in the same PowerShell window:
 
 ```powershell
 $env:TOGETHER_API_KEY = "your-together-api-key"
-$env:TOGETHER_MODEL = "your-together-model-name"
-$env:TOGETHER_BASE_URL = "https://api.together.xyz/v1"
 ```
 
+`TOGETHER_MODEL` is optional and defaults to `moonshotai/Kimi-K3.1-Pro`.
 `TOGETHER_BASE_URL` is optional and defaults to `https://api.together.xyz/v1`.
 
 ### OpenAI-compatible provider

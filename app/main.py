@@ -2,12 +2,17 @@ import ipaddress
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException, Request, Response
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+# Load environment variables from .env file (if it exists) at project root.
+# This allows persistent configuration without setting session-specific env vars.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
 from app.assistant import AssistantError, OnboardingAssistant
-from app.knowledge import get_role, get_roles, get_sources
+from app.knowledge import get_role, get_roles, get_software_history, get_sources
 from app.models import (
     ChatRequest,
     ChatResponse,
@@ -115,6 +120,7 @@ def create_app(
         return SessionResponse(
             role=role,
             context=SessionContext(expires_in_seconds=store.ttl_seconds),
+            software_history=get_software_history(body.role_id),
         )
 
     @application.get("/api/session", response_model=SessionResponse)
@@ -139,6 +145,7 @@ def create_app(
                 active_task_id=active_task_id,
                 pending_update=update_response,
             ),
+            software_history=get_software_history(session.role_id),
         )
 
     @application.post("/api/guide", response_model=GuideResponse)
@@ -157,7 +164,9 @@ def create_app(
 
         try:
             with session.lock:
-                result = onboarding_assistant.generate_guide(role, task, list(session.history))
+                result = onboarding_assistant.generate_guide(
+                    role, task, list(session.history), get_software_history(session.role_id)
+                )
                 session.active_task_id = task["id"]
                 guide_history = result.answer + "\n" + "\n".join(
                     f"{step['title']}: {step['instructions']}" for step in result.steps
@@ -196,6 +205,7 @@ def create_app(
                     task,
                     list(session.history),
                     body.message,
+                    get_software_history(session.role_id),
                 )
                 store.record_exchange(session, body.message, result.answer)
         except AssistantError as error:

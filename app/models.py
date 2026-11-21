@@ -9,6 +9,16 @@ class SpreadsheetTask(BaseModel):
     description: str
 
 
+class SoftwareBackground(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    vendor: str
+    category: str
+    years_used: int = Field(ge=0, le=100)
+    proficiency: str
+
+
 class EmployeeRole(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -106,3 +116,4 @@ class SessionContext(BaseModel):
 class SessionResponse(BaseModel):
     role: EmployeeRole
     context: SessionContext
+    software_history: list[SoftwareBackground] = []

@@ -1,0 +1,45 @@
+{
+  "histories": {
+    "finance_analyst": [
+      {
+        "name": "Microsoft Excel",
+        "vendor": "Microsoft",
+        "category": "Spreadsheet",
+        "years_used": 8,
+        "proficiency": "expert"
+      },
+      {
+        "name": "Google Sheets",
+        "vendor": "Google",
+        "category": "Spreadsheet",
+        "years_used": 3,
+        "proficiency": "intermediate"
+      }
+    ],
+    "hr_coordinator": [
+      {
+        "name": "Microsoft Excel",
+        "vendor": "Microsoft",
+        "category": "Spreadsheet",
+        "years_used": 5,
+        "proficiency": "intermediate"
+      }
+    ],
+    "operations_manager": [
+      {
+        "name": "Microsoft Excel",
+        "vendor": "Microsoft",
+        "category": "Spreadsheet",
+        "years_used": 6,
+        "proficiency": "advanced"
+      },
+      {
+        "name": "Google Sheets",
+        "vendor": "Google",
+        "category": "Spreadsheet",
+        "years_used": 2,
+        "proficiency": "beginner"
+      }
+    ]
+  }
+}
