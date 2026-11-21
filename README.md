@@ -49,7 +49,7 @@ $env:OPENAI_MODEL = "your-model-name"
 $env:OPENAI_BASE_URL = "https://api.openai.com/v1"
 ```
 
-The app reports a clear configuration or availability error if model settings are missing or the provider cannot be reached. The configured administrator secret is separate from the model key:
+The app requests JSON-formatted responses from a model that supports JSON mode, allows up to two minutes for a response, and reports a clear configuration or availability error if model settings are missing or the provider cannot be reached. The configured administrator secret is separate from the model key:
 
 ```powershell
 $env:DEMO_ADMIN_SECRET = "choose-a-long-local-demo-secret"

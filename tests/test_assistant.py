@@ -94,6 +94,7 @@ def test_model_generated_urls_are_not_returned_as_answer_content() -> None:
 def test_openai_compatible_client_sends_configured_request(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("TOGETHER_API_KEY", raising=False)
     monkeypatch.delenv("TOGETHER_MODEL", raising=False)
+    monkeypatch.delenv("TOGETHER_BASE_URL", raising=False)
     monkeypatch.setenv("OPENAI_API_KEY", "demo-secret")
     monkeypatch.setenv("OPENAI_MODEL", "demo-model")
     captured: dict[str, object] = {}
@@ -115,6 +116,42 @@ def test_openai_compatible_client_sends_configured_request(monkeypatch: pytest.M
     assert captured["url"] == "https://api.openai.com/v1/chat/completions"
     assert captured["authorization"] == "Bearer demo-secret"
     assert captured["payload"]["model"] == "demo-model"
+    assert captured["payload"]["response_format"] == {"type": "json_object"}
+    assert captured["payload"]["max_tokens"] == 2000
+
+
+def test_model_request_allows_more_than_30_seconds(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "demo-secret")
+    monkeypatch.setenv("OPENAI_MODEL", "demo-model")
+    captured: dict[str, object] = {}
+
+    def handle(request: httpx.Request) -> httpx.Response:
+        captured["timeout"] = request.extensions["timeout"]
+        return httpx.Response(
+            200,
+            json={"choices": [{"message": {"content": '{"answer":"ok"}'}}]},
+        )
+
+    client = OpenAICompatibleClient(transport=httpx.MockTransport(handle))
+
+    client.complete([{"role": "user", "content": "Hello"}])
+
+    assert captured["timeout"]["read"] > 30
+
+
+def test_json_fenced_model_output_is_parsed() -> None:
+    provider = FakeProvider(
+        "```json\n"
+        '{"answer":"Supported","source_ids":["libreoffice_calc_guide_24_8"],"unsupported":false}'
+        "\n```"
+    )
+    role = get_role("finance_analyst")
+
+    result = OnboardingAssistant(provider).answer_question(role, None, [], "What does the guide say?")
+
+    assert result.unsupported is False
+    assert result.answer == "Supported"
+    assert result.source_ids == ("libreoffice_calc_guide_24_8",)
 
 
 def test_together_compatible_client_uses_together_configuration(

@@ -38,7 +38,7 @@ class CompletionProvider(Protocol):
 class OpenAICompatibleClient:
     def __init__(
         self,
-        timeout_seconds: float = 30,
+        timeout_seconds: float = 120,
         transport: httpx.BaseTransport | None = None,
     ) -> None:
         self.timeout_seconds = timeout_seconds
@@ -79,7 +79,8 @@ class OpenAICompatibleClient:
                         "model": model,
                         "messages": messages,
                         "temperature": 0.2,
-                        "max_tokens": 1200,
+                        "max_tokens": 2000,
+                        "response_format": {"type": "json_object"},
                     },
                 )
         except httpx.TimeoutException as error:
@@ -213,6 +214,13 @@ class OnboardingAssistant:
 
     @staticmethod
     def _parse_result(raw_content: str, guide: bool) -> AssistantResult:
+        fenced_json = re.fullmatch(
+            r"```(?:json)?\s*(.*?)\s*```",
+            raw_content.strip(),
+            re.IGNORECASE | re.DOTALL,
+        )
+        if fenced_json is not None:
+            raw_content = fenced_json.group(1)
         try:
             payload = json.loads(raw_content)
         except (TypeError, ValueError) as error:
