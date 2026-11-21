@@ -166,6 +166,13 @@ async function restoreSession() {
     updateControls();
     renderSoftwareHistory(session.software_history);
     if (session.context.pending_update) renderProposal(session.context.pending_update);
+    if (session.context.active_task_id === null) {
+      const taskId = firstTaskId();
+      if (taskId) {
+        taskSelect.value = taskId;
+        generateGuide(taskId);
+      }
+    }
   } catch (error) {
     sessionStatus.textContent = "Choose a role and start a temporary demo session.";
   }
@@ -205,23 +212,35 @@ document.querySelector("#start-session").addEventListener("click", async () => {
     sessionStatus.textContent = `Session active for ${session.role.name}.`;
     updateControls();
     renderSoftwareHistory(session.software_history);
+    const taskId = firstTaskId();
+    if (taskId) {
+      taskSelect.value = taskId;
+      generateGuide(taskId);
+    }
   } catch (error) {
     sessionStatus.textContent = error.message;
   }
 });
 
-generateGuideButton.addEventListener("click", async () => {
+async function generateGuide(taskId) {
+  if (!taskId) return;
   guideContent.textContent = "Generating a cited guide…";
   try {
     const guide = await apiRequest("/api/guide", {
       method: "POST",
-      body: JSON.stringify({ task_id: taskSelect.value }),
+      body: JSON.stringify({ task_id: taskId }),
     });
     renderGuide(guide);
   } catch (error) {
     guideContent.textContent = error.message;
   }
-});
+}
+
+function firstTaskId() {
+  return taskSelect.options.length ? taskSelect.options[0].value : null;
+}
+
+generateGuideButton.addEventListener("click", () => generateGuide(taskSelect.value));
 
 chatForm.addEventListener("submit", async (event) => {
   event.preventDefault();

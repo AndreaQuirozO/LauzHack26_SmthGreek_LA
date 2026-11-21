@@ -178,3 +178,31 @@ def test_software_history_reaches_provider_context() -> None:
     system_prompt = provider.calls[0][0]["content"]
     assert "software_background" in system_prompt
     assert "Microsoft Excel" in system_prompt
+
+
+def test_session_start_then_guide_for_first_task() -> None:
+    provider = FakeProvider([GUIDE_CONTENT])
+    client = TestClient(create_app(assistant=OnboardingAssistant(provider)))
+
+    session = client.post("/api/session", json={"role_id": "finance_analyst"})
+    first_task = session.json()["role"]["tasks"][0]["id"]
+    assert first_task == "monthly_budget"
+    assert session.json()["context"]["active_task_id"] is None
+
+    response = client.post("/api/guide", json={"task_id": first_task})
+
+    assert response.status_code == 200
+    assert response.json()["title"] == "Build a monthly budget"
+    assert first_task in provider.calls[0][0]["content"]
+
+
+def test_active_task_id_reflects_whether_a_guide_has_run() -> None:
+    provider = FakeProvider([GUIDE_CONTENT])
+    client = TestClient(create_app(assistant=OnboardingAssistant(provider)))
+    client.post("/api/session", json={"role_id": "finance_analyst"})
+
+    assert client.get("/api/session").json()["context"]["active_task_id"] is None
+
+    client.post("/api/guide", json={"task_id": "monthly_budget"})
+
+    assert client.get("/api/session").json()["context"]["active_task_id"] == "monthly_budget"
