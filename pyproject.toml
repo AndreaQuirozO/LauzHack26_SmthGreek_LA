@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "excel-calc-onboarding-assistant"
 version = "0.1.0"
-description = "A local demo for onboarding employees from Excel to LibreOffice Calc."
+description = "A source-grounded local demo for enterprise software migration assistance."
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.124.4,<0.125",

@@ -1,1 +1,1 @@
-"""Excel-to-Calc onboarding demo application."""
+"""Enterprise migration assistant demo application."""

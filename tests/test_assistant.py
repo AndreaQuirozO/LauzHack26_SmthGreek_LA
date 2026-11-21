@@ -92,6 +92,8 @@ def test_model_generated_urls_are_not_returned_as_answer_content() -> None:
 
 
 def test_openai_compatible_client_sends_configured_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("TOGETHER_API_KEY", raising=False)
+    monkeypatch.delenv("TOGETHER_MODEL", raising=False)
     monkeypatch.setenv("OPENAI_API_KEY", "demo-secret")
     monkeypatch.setenv("OPENAI_MODEL", "demo-model")
     captured: dict[str, object] = {}
@@ -115,7 +117,33 @@ def test_openai_compatible_client_sends_configured_request(monkeypatch: pytest.M
     assert captured["payload"]["model"] == "demo-model"
 
 
+def test_together_compatible_client_uses_together_configuration(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("TOGETHER_API_KEY", "together-secret")
+    monkeypatch.setenv("TOGETHER_MODEL", "together-model")
+    captured: dict[str, object] = {}
+
+    def handle(request: httpx.Request) -> httpx.Response:
+        captured["url"] = str(request.url)
+        captured["authorization"] = request.headers["Authorization"]
+        captured["payload"] = json.loads(request.content)
+        return httpx.Response(
+            200,
+            json={"choices": [{"message": {"content": '{"answer":"ok"}'}}]},
+        )
+
+    client = OpenAICompatibleClient(transport=httpx.MockTransport(handle))
+
+    assert client.complete([{"role": "user", "content": "Hello"}]) == '{"answer":"ok"}'
+    assert captured["url"] == "https://api.together.xyz/v1/chat/completions"
+    assert captured["authorization"] == "Bearer together-secret"
+    assert captured["payload"]["model"] == "together-model"
+
+
 def test_openai_compatible_client_requires_key_and_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("TOGETHER_API_KEY", raising=False)
+    monkeypatch.delenv("TOGETHER_MODEL", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_MODEL", raising=False)
 
@@ -124,6 +152,8 @@ def test_openai_compatible_client_requires_key_and_model(monkeypatch: pytest.Mon
 
 
 def test_provider_failure_does_not_expose_provider_response(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("TOGETHER_API_KEY", raising=False)
+    monkeypatch.delenv("TOGETHER_MODEL", raising=False)
     monkeypatch.setenv("OPENAI_API_KEY", "demo-secret")
     monkeypatch.setenv("OPENAI_MODEL", "demo-model")
 

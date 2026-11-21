@@ -132,6 +132,8 @@ def test_unsupported_answers_are_explicit_and_have_no_model_supplied_link() -> N
 
 
 def test_missing_model_configuration_returns_actionable_api_error(monkeypatch) -> None:
+    monkeypatch.delenv("TOGETHER_API_KEY", raising=False)
+    monkeypatch.delenv("TOGETHER_MODEL", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_MODEL", raising=False)
     client = TestClient(create_app())

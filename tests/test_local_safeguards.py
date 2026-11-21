@@ -20,7 +20,7 @@ def test_local_ui_and_same_origin_state_changes_are_available() -> None:
     )
 
     assert page.status_code == 200
-    assert "Excel to LibreOffice Calc onboarding" in page.text
+    assert "Enterprise migration assistant" in page.text
     assert session.status_code == 201
 
 

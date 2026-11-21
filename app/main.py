@@ -38,7 +38,7 @@ def create_app(
     assistant: OnboardingAssistant | None = None,
     update_service: UpdateService | None = None,
 ) -> FastAPI:
-    application = FastAPI(title="Excel to Calc Onboarding Demo", version="0.1.0")
+    application = FastAPI(title="Enterprise Migration Assistant", version="0.1.0")
     store = session_store or SessionStore()
     onboarding_assistant = assistant if assistant is not None else OnboardingAssistant()
     updates = update_service if update_service is not None else UpdateService()

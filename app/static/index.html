@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Excel to Calc onboarding demo</title>
+    <title>Enterprise migration assistant</title>
     <link rel="stylesheet" href="/static/styles.css">
     <script src="/static/app.js" defer></script>
   </head>
   <body>
     <header class="page-header">
       <p class="eyebrow">Local hackathon prototype</p>
-      <h1>Excel to LibreOffice Calc onboarding</h1>
-      <p>Choose a fictional role and spreadsheet task to get a source-backed guide and ask follow-up questions.</p>
+      <h1>Enterprise migration assistant</h1>
+      <p>Choose a fictional role and migration task to get a source-backed guide and ask follow-up questions. Excel to LibreOffice Calc is one example scenario.</p>
       <p class="notice">Use fictional examples only. Do not enter confidential company or employee information. Model requests are sent to the provider configured by the demo operator.</p>
     </header>
 
@@ -32,7 +32,7 @@
 
       <section class="panel" aria-labelledby="guide-heading">
         <h2 id="guide-heading">2. Get an onboarding guide</h2>
-        <button id="generate-guide" type="button" disabled>Generate Excel-to-Calc guide</button>
+        <button id="generate-guide" type="button" disabled>Generate migration guide</button>
         <div id="guide-content" class="answer" aria-live="polite"></div>
       </section>
 
@@ -40,7 +40,7 @@
         <h2 id="chat-heading">3. Ask a follow-up</h2>
         <form id="chat-form">
           <label for="chat-message">Question about the current guide</label>
-          <textarea id="chat-message" rows="3" maxlength="2000" placeholder="Ask about a step or a Calc formula…" required disabled></textarea>
+          <textarea id="chat-message" rows="3" maxlength="2000" placeholder="Ask about a migration step or feature…" required disabled></textarea>
           <button id="send-chat" type="submit" disabled>Ask</button>
         </form>
         <div id="chat-content" class="conversation" aria-live="polite"></div>

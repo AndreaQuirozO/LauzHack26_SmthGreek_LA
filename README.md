@@ -1,6 +1,6 @@
-# Excel to LibreOffice Calc onboarding demo
+# Enterprise migration assistant demo
 
-A local hackathon prototype that helps fictional employees move familiar spreadsheet tasks from Microsoft Excel to LibreOffice Calc. The server offers role-specific guides and grounded follow-up answers, plus a separate administrator-approved update demonstration in a disposable Docker container.
+A local hackathon prototype for source-grounded enterprise software migration assistance. It offers role-specific guides and follow-up answers, plus a separate administrator-approved update demonstration in a disposable Docker container. The built-in migration scenario demonstrates moving spreadsheet work from Microsoft Excel to LibreOffice Calc; the provider and grounding architecture support additional migration scenarios.
 
 ## Scope and safety
 
@@ -23,11 +23,25 @@ From the project directory, create an environment and install the app with its t
 
 ```powershell
 python --version
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+python -m venv lauzhack.venv
+.\lauzhack.venv\Scripts\python.exe -m pip install -e ".[test]"
 ```
 
-Configure the model provider in the same PowerShell window. `OPENAI_BASE_URL` is optional and defaults to the OpenAI API URL.
+### Together.AI
+
+Configure Together.AI in the same PowerShell window:
+
+```powershell
+$env:TOGETHER_API_KEY = "your-together-api-key"
+$env:TOGETHER_MODEL = "your-together-model-name"
+$env:TOGETHER_BASE_URL = "https://api.together.xyz/v1"
+```
+
+`TOGETHER_BASE_URL` is optional and defaults to `https://api.together.xyz/v1`.
+
+### OpenAI-compatible provider
+
+Alternatively, configure an OpenAI-compatible provider:
 
 ```powershell
 $env:OPENAI_API_KEY = "your-model-provider-key"
@@ -51,10 +65,24 @@ Build the fixed update image before trying the approval workflow. The build down
 docker build --tag excel-calc-certifi-demo:2026.11.20 .\demo\update
 ```
 
+If PowerShell reports `docker: The term 'docker' is not recognized`, Docker is not installed or is not on `PATH`.
+
+1. Install Docker Desktop for Windows.
+2. Start Docker Desktop and wait until it reports that the Docker Engine is running.
+3. Open a new PowerShell window so the updated `PATH` is loaded.
+4. Verify the installation:
+
+```powershell
+docker --version
+docker run --rm hello-world
+```
+
+The demo update workflow can start even while Docker is unavailable, but approval will fail safely with an actionable Docker error.
+
 Start the web app bound to IPv4 loopback:
 
 ```powershell
-.\.venv\Scripts\python.exe -m app.main
+.\lauzhack.venv\Scripts\python.exe -m app.main
 ```
 
 Open <http://127.0.0.1:8000>. The server rejects non-loopback hosts and cross-origin state-changing requests. Keep the terminal open while using the demo.
@@ -62,7 +90,7 @@ Open <http://127.0.0.1:8000>. The server rejects non-loopback hosts and cross-or
 ## Walkthrough
 
 1. Select one of the fictional roles and start a temporary onboarding session.
-2. Select a familiar spreadsheet task and generate an Excel-to-Calc guide. Follow the source links to verify product details.
+2. Select a migration task and generate a source-grounded guide. Follow the links to verify product details.
 3. Ask a task-related follow-up. If the curated notes do not support an answer, the assistant says so instead of inventing one.
 4. Review the separate `certifi` proposal. It always describes the catalog's fixed baseline `2024.8.30` and target `2026.11.20`; it does not inspect the host.
 5. An authorized demo administrator enters `DEMO_ADMIN_SECRET` and approves once. The server runs the prebuilt image with fixed arguments, no mounts, no network, a read-only root filesystem, a non-root UID, bounded temporary storage, resource limits, and a time limit.
@@ -75,14 +103,14 @@ Each session can create only one proposal, and a proposal is consumed before exe
 Run the API, grounding, session, approval, and isolation-argument tests:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest -q
+.\lauzhack.venv\Scripts\python.exe -m pytest -q
 ```
 
 The real Docker integration test is opt-in. It builds a uniquely tagged image, checks the approved offline update and container cleanup, then removes the image it built:
 
 ```powershell
 $env:RUN_DOCKER_INTEGRATION = "1"
-.\.venv\Scripts\python.exe -m pytest tests\test_updates.py -k docker_update_integration -q
+.\lauzhack.venv\Scripts\python.exe -m pytest tests\test_updates.py -k docker_update_integration -q
 Remove-Item Env:\RUN_DOCKER_INTEGRATION
 ```
 
